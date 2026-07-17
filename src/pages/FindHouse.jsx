@@ -76,14 +76,16 @@ export default function Home() {
         {error && <p className="home-error">{error}</p>}
 
         {houses.map((house) => (
-          <section className="membership-card" key={house.id}>
-            <div className="membership-icon"><HomeIcon size={20} /></div>
-            <div className="membership-copy">
-              <strong>{house.name}</strong>
-              <span>{house.address} · {house.rooms} room{house.rooms === 1 ? "" : "s"}</span>
-            </div>
-            <ArrowRight className="membership-arrow" size={20} />
-          </section>
+          <Link to={`/houses/${house.id}`} className="membership-link" key={house.id}>
+            <section className="membership-card">
+              <div className="membership-icon"><HomeIcon size={20} /></div>
+              <div className="membership-copy">
+                <strong>{house.name}</strong>
+                <span>{house.address} · {house.rooms} room{house.rooms === 1 ? "" : "s"}</span>
+              </div>
+              <ArrowRight className="membership-arrow" size={20} />
+            </section>
+          </Link>
         ))}
 
         <div className="home-actions">

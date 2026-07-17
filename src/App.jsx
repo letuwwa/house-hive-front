@@ -9,6 +9,7 @@ import Register from './pages/Register.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Layout from './components/Layout.jsx'
 import FindHouse from './pages/FindHouse.jsx'
+import House from './pages/House.jsx'
 import JoinHouse from './pages/JoinHouse.jsx';
 import CreateHouse from './pages/CreateHouse.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx'
@@ -36,6 +37,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <FindHouse />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'houses/:houseId',
+        element: (
+          <ProtectedRoute>
+            <House />
           </ProtectedRoute>
         ),
       },
