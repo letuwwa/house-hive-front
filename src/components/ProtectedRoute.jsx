@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 function ProtectedRoute({ children }) {
-  const { user, loading } = useSelector( //redux
+  const { user, loading } = useSelector(
     (state) => state.auth
   )
 

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import * as authApi from '../api/auth.js'
+import { setAccessToken } from '../api/client.js'
 
 const AuthContext = createContext(null)
 
@@ -23,12 +24,18 @@ export function AuthProvider({ children }) {
 
   async function login(credentials) {
     const data = await authApi.login(credentials)
+    if (data?.tokens?.access_token) {
+      setAccessToken(data.tokens.access_token)
+    }
     setUser(data.user)
     return data.user
   }
 
   async function register(payload) {
     const data = await authApi.register(payload)
+    if (data?.tokens?.access_token) {
+      setAccessToken(data.tokens.access_token)
+    }
     setUser(data.user)
     return data.user
   }
@@ -36,7 +43,10 @@ export function AuthProvider({ children }) {
   async function logout() {
     try {
       await authApi.logout()
+    } catch {
+      // Local logout should still complete if the backend token is expired or already revoked.
     } finally {
+      setAccessToken(null)
       setUser(null)
     }
   }

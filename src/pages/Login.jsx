@@ -72,8 +72,6 @@ function Login() {
 
             <div className="password-row">
               <label>Password</label>
-
-              <a href="/">Forgot password?</a>
             </div>
 
             <input

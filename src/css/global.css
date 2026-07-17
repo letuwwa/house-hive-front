@@ -1,3 +1,46 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #fffdf8;
+  color: #111;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.content {
+  min-height: 100vh;
+}
+
+.footer {
+  padding: 16px 24px;
+  text-align: center;
+  color: #78716c;
+  background: #fffdf8;
+  border-top: 1px solid #e7e5e4;
+}
+
+.app-loading-screen,
+.page-message {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #57534e;
+}
+
 /* Dashboard / Profile Page */
 .dashboard-page {
   --primary: #6b4f3b;
