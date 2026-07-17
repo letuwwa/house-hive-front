@@ -1,13 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Home as HomeIcon, KeyRound, LogOut, Plus } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { logout } from "../features/auth/authSlice.js";
+import { listHouses } from "../api/houses.js";
 import "../css/FindHouse.css";
 
-export default function Home({ membership = null, loading = false, onLogout }) {
+export default function Home() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [houses, setHouses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadHouses() {
+      try {
+        const result = await listHouses();
+        if (active) {
+          setHouses(result);
+          setError("");
+        }
+      } catch (requestError) {
+        if (active) {
+          setError(requestError.message || "Could not load your houses.");
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadHouses();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleLogout = async () => {
-    if (onLogout) await onLogout();
+    await dispatch(logout());
     navigate("/login");
   };
 
@@ -38,18 +73,18 @@ export default function Home({ membership = null, loading = false, onLogout }) {
           <p>Join an existing house or start a new one.</p>
         </header>
 
-        {membership && (
-          <Link to="/FindHouse" className="membership-link">
-            <section className="membership-card">
-              <div className="membership-icon"><HomeIcon size={20} /></div>
-              <div className="membership-copy">
-                <strong>Go to your house</strong>
-                <span>You&apos;re a member of {membership.house_name}</span>
-              </div>
-              <ArrowRight className="membership-arrow" size={20} />
-            </section>
-          </Link>
-        )}
+        {error && <p className="home-error">{error}</p>}
+
+        {houses.map((house) => (
+          <section className="membership-card" key={house.id}>
+            <div className="membership-icon"><HomeIcon size={20} /></div>
+            <div className="membership-copy">
+              <strong>{house.name}</strong>
+              <span>{house.address} · {house.rooms} room{house.rooms === 1 ? "" : "s"}</span>
+            </div>
+            <ArrowRight className="membership-arrow" size={20} />
+          </section>
+        ))}
 
         <div className="home-actions">
           <Link to="/JoinHouse" className="action-card action-card-light">

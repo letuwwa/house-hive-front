@@ -1,6 +1,10 @@
 import axios from 'axios'
 
 const TOKEN_KEY = "token";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ??
+  import.meta.env.VITE_API_URL?.replace(/\/api\/v1\/?$/, '') ??
+  'http://localhost:8000';
 
 let accessToken = localStorage.getItem(TOKEN_KEY);
 
@@ -16,8 +20,8 @@ export function setAccessToken(token) {
 
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000',
-  withCredentials: true, //React app will send and receive the FastAPI JWT cookie
+  baseURL: API_BASE_URL,
+  withCredentials: true,
 })
 
 api.interceptors.request.use((config) => {

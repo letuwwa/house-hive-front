@@ -52,15 +52,15 @@ export const register = createAsyncThunk(
 
 export const logout = createAsyncThunk(
     "auth/logout",
-    async (_, { rejectWithValue }) => {
+    async () => {
         try {
             await authApi.logout();
-            // REMOVE TOKEN ON LOGOUT
+        } catch {
+            // Local logout should still complete if the backend token is expired or already revoked.
+        } finally {
             setAccessToken(null);
-            return null;
-        } catch (err) {
-            return rejectWithValue(extractErrorMessage(err));
         }
+        return null;
     }
 );
 

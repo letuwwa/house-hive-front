@@ -1,28 +1,20 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux"; //redux
-import * as usersApi from "../api/users"; //for following stats
+import { listHouses } from "../api/houses.js";
 
 function Profile() {
 
-  const navigate = useNavigate(); //for clicking a book
   const user = useSelector((state) => state.auth.user); //redux
-  const [books, setBooks] = useState([]);
-  const [stats, setStats] = useState({ //for followers
-  followers: 0,
-  following: 0,
-});
+  const [houses, setHouses] = useState([]);
+  const [error, setError] = useState("");
 
  async function loadData() {
   try {
-    const booksData = await booksApi.getMyBooks();
-    const statsData = await usersApi.getStats();
-
-    setBooks(booksData);
-    setStats(statsData);
-
+    setHouses(await listHouses());
+    setError("");
   } catch (err) {
     console.error(err);
+    setError(err.message || "Could not load your houses.");
   }
 }
 
@@ -37,7 +29,7 @@ function Profile() {
       <section className="profile-header">
 
         <h1>
-          {user?.display_name || user?.username}
+          {user?.first_name || user?.username}
         </h1>
 
         <p>
@@ -48,19 +40,19 @@ function Profile() {
 
           <div>
             <strong>
-              {stats.followers}
+              {houses.length}
             </strong>
             <span>
-              Followers
+              Houses
             </span>
           </div>
 
           <div>
             <strong>
-              {stats.following}
+              {user?.role || "regular"}
             </strong>
             <span>
-              Following
+              Role
             </span>
           </div>
 
@@ -71,46 +63,27 @@ function Profile() {
       <section className="library-section">
 
         <div className="section-header">
-          <h2>My Library</h2>
-          <Link to="/my-books" className="button button-primary">
-            + Add Book
-          </Link>
+          <h2>My Houses</h2>
         </div>
 
-        {books.length === 0 ? (
+        {error && <p>{error}</p>}
+
+        {houses.length === 0 ? (
 
           <p>
-            You haven't added any books yet.
+            You haven't joined any houses yet.
           </p>
 
         ) : (
 
           <div className="books-grid">
 
-            {books.map((book) => (
+            {houses.map((house) => (
 
-            <div key={book.id} className="book-card" onClick={() => navigate(`/my-books/${book.id}`)}>
-
-            <h3>{book.title}</h3>
-
-            <p> {book.author || "Unknown author"}</p>
-
-          <span> {book.available ? "Available" : "Borrowed"}</span>
-
-          <button className="button-secondary" onClick={async (e) => {
-            e.stopPropagation();
-            try {
-              await booksApi.updateAvailability(book.id);
-              loadData();
-            } catch (err) {
-            console.error(err);
-            }
-          }}
-          >
-          {book.available ? "Mark as unavailable" : "Mark as available"}
-          </button>
-
-
+            <div key={house.id} className="book-card">
+              <h3>{house.name}</h3>
+              <p>{house.address}</p>
+              <span>{house.rooms} room{house.rooms === 1 ? "" : "s"}</span>
           </div>
             ))}
           </div>

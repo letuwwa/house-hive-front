@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Check, Home as HomeIcon, MapPin, Plus, Users } from "lucide-react";
-import api from "../api/client.js";
+import { createHouse } from "../api/houses.js";
 import "../css/CreateHouse.css";
-
-async function createHouse(houseData) {
-  return api.post("/api/v1/houses", houseData);
-}
 
 export default function CreateHouse() {
   const [form, setForm] = useState({ name: "", address: "", rooms: "" });

@@ -1,16 +1,17 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux"; //for redux
+import { useDispatch, useSelector } from "react-redux";
 import { getMe } from "./features/auth/authSlice";
 
-import Layout from './components/Layout.jsx'
-import ProtectedRoute from './components/ProtectedRoute.jsx'
-import FindHouse from './pages/FindHouse.jsx'
 import Login from './pages/Login.jsx'
-import NotFound from './pages/NotFound.jsx'
+import Profile from './pages/Profile.jsx'
 import Register from './pages/Register.jsx'
+import NotFound from './pages/NotFound.jsx'
+import Layout from './components/Layout.jsx'
+import FindHouse from './pages/FindHouse.jsx'
 import JoinHouse from './pages/JoinHouse.jsx';
 import CreateHouse from './pages/CreateHouse.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 
 const router = createBrowserRouter([
@@ -22,6 +23,14 @@ const router = createBrowserRouter([
       {index: true, element: <Navigate to="/login" replace />},
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> },
+      {
+        path: 'profile',
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: 'FindHouse',
         element: (
