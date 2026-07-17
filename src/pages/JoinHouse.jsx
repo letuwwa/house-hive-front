@@ -1,22 +1,21 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Home as HomeIcon, KeyRound, ArrowLeft, Users, MapPin, Check } from "lucide-react";
+import api from "../api/client.js";
 import "../css/JoinHouse.css";
 
 
 async function findHouseById(id) {
-  const res = await fetch(`/api/houses/${encodeURIComponent(id)}`);
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error("Search failed");
-  return res.json();
+  try {
+    return await api.get(`/api/v1/houses/${encodeURIComponent(id)}`);
+  } catch (error) {
+    if (error.status === 404) return null;
+    throw error;
+  }
 }
 
 async function joinHouse(house) {
-  const res = await fetch(`/api/houses/${house.id}/join`, {
-    method: "POST",
-  });
-  if (!res.ok) throw new Error("Join failed");
-  return res.json();
+  return api.post(`/api/v1/houses/${house.id}/join`);
 }
 
 export default function JoinHouse() {

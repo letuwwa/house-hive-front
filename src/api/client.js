@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const TOKEN_KEY = "house_hive_access_token";
+const TOKEN_KEY = "token";
 
 let accessToken = localStorage.getItem(TOKEN_KEY);
 

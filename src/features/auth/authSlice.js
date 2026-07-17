@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import * as authApi from "../../api/auth.js";
+import { setAccessToken } from "../../api/client.js";
 
 function extractErrorMessage(err) {
     return err.response?.data?.detail || err.message || "Something went wrong";
@@ -24,7 +25,7 @@ export const login = createAsyncThunk(
             const data = await authApi.login(credentials);
             // save token to local storage
             if (data?.tokens?.access_token) {
-                localStorage.setItem("token", data.tokens.access_token);
+                setAccessToken(data.tokens.access_token);
             }
             return data; // { user, tokens }
         } catch (err) {
@@ -40,7 +41,7 @@ export const register = createAsyncThunk(
             const data = await authApi.register(payload);
             // save token to local storage
             if (data?.tokens?.access_token) {
-                localStorage.setItem("token", data.tokens.access_token);
+                setAccessToken(data.tokens.access_token);
             }
             return data; // { user, tokens }
         } catch (err) {
@@ -55,7 +56,7 @@ export const logout = createAsyncThunk(
         try {
             await authApi.logout();
             // REMOVE TOKEN ON LOGOUT
-            localStorage.removeItem("token");
+            setAccessToken(null);
             return null;
         } catch (err) {
             return rejectWithValue(extractErrorMessage(err));
@@ -85,7 +86,7 @@ const authSlice = createSlice({
                 state.user = null;
                 state.accessToken = null;
                 state.loading = false;
-                localStorage.removeItem("token"); 
+                setAccessToken(null);
             })
             .addCase(login.fulfilled, (state, action) => {
                 state.user = action.payload.user;
@@ -101,6 +102,7 @@ const authSlice = createSlice({
                 state.user = null;
                 state.accessToken = null;
                 state.loading = false;
+                setAccessToken(null);
             });
     }
 });

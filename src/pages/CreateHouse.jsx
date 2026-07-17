@@ -1,31 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Check, Home as HomeIcon, MapPin, Plus, Users } from "lucide-react";
+import api from "../api/client.js";
 import "../css/CreateHouse.css";
 
 async function createHouse(houseData) {
-  // Retrieve token if you are using localStorage for JWTs
-  const token = localStorage.getItem("token"); 
-
-  
-  const response = await fetch("http://localhost:8000/api/v1/houses", { 
-    method: "POST",
-    headers: { 
-      "Content-Type": "application/json",
-      ...(token && { "Authorization": `Bearer ${token}` })
-    },
-    body: JSON.stringify(houseData),
-  });
-
-  if (!response.ok) {
-    const data = await response.json().catch(() => ({}));
-    const errorMessage = typeof data.detail === "string" 
-      ? data.detail 
-      : "Could not create the house. Please check your inputs.";
-    throw new Error(errorMessage);
-  }
-
-  return response.json();
+  return api.post("/api/v1/houses", houseData);
 }
 
 export default function CreateHouse() {
@@ -71,7 +51,7 @@ export default function CreateHouse() {
           <span className="ch-brand-icon"><HomeIcon size={20} /></span>
           <span>HouseHive</span>
         </Link>
-        <Link to="/" className="ch-back-link"><ArrowLeft size={16} /> Back</Link>
+        <Link to="/FindHouse" className="ch-back-link"><ArrowLeft size={16} /> Back</Link>
       </nav>
 
       <main className="ch-container">
@@ -105,8 +85,7 @@ export default function CreateHouse() {
             <h1>{createdHouse.name || form.name} is ready!</h1>
             <p>Your house has been saved. Share its ID with people you&apos;d like to invite.</p>
             {createdHouse.id && <code className="ch-house-id">House ID: {createdHouse.id}</code>}
-            {/* Dynamic routing strategy to direct user straight into their new home asset */}
-            <button type="button" className="ch-button" onClick={() => navigate(`/houses/${createdHouse.id}`)}>Go to your house</button>
+            <button type="button" className="ch-button" onClick={() => navigate("/FindHouse")}>Go to dashboard</button>
           </section>
         )}
       </main>

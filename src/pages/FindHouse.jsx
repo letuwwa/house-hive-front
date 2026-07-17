@@ -39,7 +39,7 @@ export default function Home({ membership = null, loading = false, onLogout }) {
         </header>
 
         {membership && (
-          <Link to="/house" className="membership-link">
+          <Link to="/FindHouse" className="membership-link">
             <section className="membership-card">
               <div className="membership-icon"><HomeIcon size={20} /></div>
               <div className="membership-copy">
