@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { ArrowLeft, Check, Copy, Home as HomeIcon, MapPin, Users } from "lucide-react";
 import { getHouse, listHouseMembers } from "../api/houses.js";
 import {
@@ -10,10 +11,12 @@ import {
   listChoreCompletions,
   createChoreCompletion,
 } from "../api/chores.js";
+import HouseExpenses from "../components/HouseExpenses.jsx";
 import "../css/House.css";
 
 export default function House() {
   const { house_Id } = useParams();
+  const currentUser = useSelector((state) => state.auth.user);
   const [house, setHouse] = useState(null);
   const [members, setMembers] = useState([]);
   const [chores, setChores] = useState([]);
@@ -211,6 +214,13 @@ export default function House() {
           <ArrowLeft size={16} />
           Back to dashboard
         </Link>
+        {currentUser && (
+          <div className="house-user">
+            <strong>@{currentUser.username}</strong>
+            <span aria-hidden="true">·</span>
+            <span>{currentUser.email}</span>
+          </div>
+        )}
       </nav>
 
       <main className="house-container">
@@ -278,124 +288,128 @@ export default function House() {
               </section>
             </aside>
 
-            <section className="house-panel house-chores-panel">
-              <div className="house-chores">
-                <div className="house-section-header">
-                  <div>
-                    <h2>Chores</h2>
-                    <p className="house-section-subtitle">Create and complete active house tasks.</p>
+            <div className="house-main-column">
+              <section className="house-panel house-chores-panel">
+                <div className="house-chores">
+                  <div className="house-section-header">
+                    <div>
+                      <h2>Chores</h2>
+                      <p className="house-section-subtitle">Create and complete active house tasks.</p>
+                    </div>
+                    <span>{activeChores.length}</span>
                   </div>
-                  <span>{activeChores.length}</span>
+
+                  <form className="chore-form" onSubmit={handleChoreSubmit}>
+                    <div className="chore-field">
+                      <label htmlFor="chore-name">Chore name</label>
+                      <input
+                        id="chore-name"
+                        name="name"
+                        value={choreForm.name}
+                        onChange={handleChoreFieldChange}
+                        placeholder="e.g. Take out trash"
+                        disabled={savingChore}
+                        required
+                      />
+                    </div>
+
+                    <div className="chore-field">
+                      <label htmlFor="chore-description">Description</label>
+                      <textarea
+                        id="chore-description"
+                        name="description"
+                        value={choreForm.description}
+                        onChange={handleChoreFieldChange}
+                        placeholder="e.g. Empty the kitchen bin"
+                        disabled={savingChore}
+                        required
+                      />
+                    </div>
+
+                    {choresError && <p className="house-error" role="alert">{choresError}</p>}
+                    <div className="chore-actions">
+                      <button type="submit" className="house-button" disabled={savingChore}>
+                        {editingChoreId ? (savingChore ? "Saving..." : "Update") : (savingChore ? "Adding..." : "Add")}
+                      </button>
+                      {editingChoreId && (
+                        <button type="button" className="house-button house-button-muted" onClick={resetChoreForm} disabled={savingChore}>
+                          Cancel
+                        </button>
+                      )}
+                    </div>
+                  </form>
+
+                  {choresLoading ? (
+                    <p className="house-empty">Loading chores...</p>
+                  ) : activeChores.length === 0 ? (
+                    <p className="house-empty">No active chores.</p>
+                  ) : (
+                    <ul className="chore-list">
+                      {activeChores.map((chore) => {
+                        const isCompleting = completingChoreId === chore.id;
+
+                        return (
+                          <li key={chore.id} className="chore-row">
+                            <div>
+                              <strong>{chore.name}</strong>
+                              <p>{chore.description}</p>
+                              <span className="chore-meta">Created by {chore.creator_username}</span>
+                            </div>
+                            <div className="chore-row-actions">
+                              <button
+                                type="button"
+                                className="house-button house-button-complete"
+                                onClick={() => handleCompleteChore(chore.id)}
+                                disabled={isCompleting}
+                              >
+                                <Check size={15} />
+                                {isCompleting ? "Completing..." : "Complete"}
+                              </button>
+                              <button type="button" className="house-button house-button-inline" onClick={() => handleEditChore(chore)}>
+                                Edit
+                              </button>
+                              <button type="button" className="house-button house-button-delete" onClick={() => handleDeleteChore(chore.id)}>
+                                Delete
+                              </button>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
                 </div>
 
-                <form className="chore-form" onSubmit={handleChoreSubmit}>
-                  <div className="chore-field">
-                    <label htmlFor="chore-name">Chore name</label>
-                    <input
-                      id="chore-name"
-                      name="name"
-                      value={choreForm.name}
-                      onChange={handleChoreFieldChange}
-                      placeholder="e.g. Take out trash"
-                      disabled={savingChore}
-                      required
-                    />
+                <div className="completed-chores">
+                  <div className="house-section-header">
+                    <h2>Completed Chores</h2>
+                    <span>{completedChores.length}</span>
                   </div>
 
-                  <div className="chore-field">
-                    <label htmlFor="chore-description">Description</label>
-                    <textarea
-                      id="chore-description"
-                      name="description"
-                      value={choreForm.description}
-                      onChange={handleChoreFieldChange}
-                      placeholder="e.g. Empty the kitchen bin"
-                      disabled={savingChore}
-                      required
-                    />
-                  </div>
-
-                  {choresError && <p className="house-error" role="alert">{choresError}</p>}
-                  <div className="chore-actions">
-                    <button type="submit" className="house-button" disabled={savingChore}>
-                      {editingChoreId ? (savingChore ? "Saving..." : "Update") : (savingChore ? "Adding..." : "Add")}
-                    </button>
-                    {editingChoreId && (
-                      <button type="button" className="house-button house-button-muted" onClick={resetChoreForm} disabled={savingChore}>
-                        Cancel
-                      </button>
-                    )}
-                  </div>
-                </form>
-
-                {choresLoading ? (
-                  <p className="house-empty">Loading chores...</p>
-                ) : activeChores.length === 0 ? (
-                  <p className="house-empty">No active chores.</p>
-                ) : (
-                  <ul className="chore-list">
-                    {activeChores.map((chore) => {
-                      const isCompleting = completingChoreId === chore.id;
-
-                      return (
-                        <li key={chore.id} className="chore-row">
-                          <div>
-                            <strong>{chore.name}</strong>
-                            <p>{chore.description}</p>
-                            <span className="chore-meta">Created by {chore.creator_username}</span>
+                  {choresLoading ? (
+                    <p className="house-empty">Loading completed chores...</p>
+                  ) : completedChores.length === 0 ? (
+                    <p className="house-empty">No completed chores yet.</p>
+                  ) : (
+                    <ul className="completed-list">
+                      {completedChores.map((completion) => (
+                        <li key={completion.id} className="completed-row">
+                          <div className="completed-icon">
+                            <Check size={16} />
                           </div>
-                          <div className="chore-row-actions">
-                            <button
-                              type="button"
-                              className="house-button house-button-complete"
-                              onClick={() => handleCompleteChore(chore.id)}
-                              disabled={isCompleting}
-                            >
-                              <Check size={15} />
-                              {isCompleting ? "Completing..." : "Complete"}
-                            </button>
-                            <button type="button" className="house-button house-button-inline" onClick={() => handleEditChore(chore)}>
-                              Edit
-                            </button>
-                            <button type="button" className="house-button house-button-delete" onClick={() => handleDeleteChore(chore.id)}>
-                              Delete
-                            </button>
+                          <div>
+                            <strong>{completion.chore?.name || "Deleted chore"}</strong>
+                            <span>Completed by {completion.completed_by_username}</span>
+                            {completion.chore?.description && <p>{completion.chore.description}</p>}
                           </div>
                         </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </div>
-
-              <div className="completed-chores">
-                <div className="house-section-header">
-                  <h2>Completed Chores</h2>
-                  <span>{completedChores.length}</span>
+                      ))}
+                    </ul>
+                  )}
                 </div>
+              </section>
 
-                {choresLoading ? (
-                  <p className="house-empty">Loading completed chores...</p>
-                ) : completedChores.length === 0 ? (
-                  <p className="house-empty">No completed chores yet.</p>
-                ) : (
-                  <ul className="completed-list">
-                    {completedChores.map((completion) => (
-                      <li key={completion.id} className="completed-row">
-                        <div className="completed-icon">
-                          <Check size={16} />
-                        </div>
-                        <div>
-                          <strong>{completion.chore?.name || "Deleted chore"}</strong>
-                          <span>Completed by {completion.completed_by_username}</span>
-                          {completion.chore?.description && <p>{completion.chore.description}</p>}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </section>
+              <HouseExpenses houseId={house_Id} members={members} />
+            </div>
           </div>
         )}
       </main>
