@@ -1,6 +1,11 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .login-page {
     min-height: 100vh;
-    padding: 32px 16px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -98,19 +103,19 @@
     font-size: 14px;
 }
 
-.login-card form {
+form {
     display: flex;
     flex-direction: column;
     text-align: left;
 }
 
-.login-card form label {
+form label {
     margin-bottom: 8px;
     font-weight: 600;
     color: #222;
 }
 
-.login-card form input {
+form input {
     height: 50px;
     border-radius: 10px;
     border: 1px solid #d8d8d8;
@@ -120,7 +125,7 @@
     transition: .2s;
 }
 
-.login-card form input:focus {
+form input:focus {
     outline: none;
     border-color: black;
 }
@@ -197,14 +202,6 @@
 }
 
 @media (max-width: 600px) {
-    .login-container h1 {
-        font-size: 34px;
-    }
-
-    .login-card {
-        padding: 24px 18px;
-    }
-
     .name-row {
         flex-direction: column;
         gap: 0;

@@ -1,36 +1,62 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Home as HomeIcon, KeyRound, ArrowLeft, Check } from "lucide-react";
-import { joinHouse } from "../api/houses.js";
+import { Home as HomeIcon, KeyRound, ArrowLeft, Users, MapPin, Check } from "lucide-react";
 import "../css/JoinHouse.css";
 
 
+async function findHouseById(id) {
+  const res = await fetch(`/api/houses/${encodeURIComponent(id)}`);
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error("Search failed");
+  return res.json();
+}
+
+async function joinHouse(house) {
+  const res = await fetch(`/api/houses/${house.id}/join`, {
+    method: "POST",
+  });
+  if (!res.ok) throw new Error("Join failed");
+  return res.json();
+}
+
 export default function JoinHouse() {
-  const [houseId, setHouseId] = useState("");
+  const [house_Id, setHouse_Id] = useState("");
+  const [house, setHouse] = useState(null);
+  const [searching, setSearching] = useState(false);
   const [joining, setJoining] = useState(false);
   const [joined, setJoined] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleJoin = async (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    if (!houseId.trim()) return;
+    if (!house_Id.trim()) return;
+    setSearching(true);
+    setError("");
+    setHouse(null);
+    try {
+      const result = await findHouseById(house_Id.trim());
+      if (!result) {
+        setError("No house found with that ID. Double-check and try again.");
+      } else {
+        setHouse(result);
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const handleJoin = async () => {
+    if (!house) return;
     setJoining(true);
     setError("");
     try {
-      await joinHouse(houseId.trim());
+      await joinHouse(house);
       setJoined(true);
-    } catch (requestError) {
-      if (requestError.status === 404) {
-        setError("No house found with that ID. Double-check and try again.");
-      } else if (requestError.status === 409) {
-        setError("");
-        setJoined(true);
-      } else if (requestError.status === 422) {
-        setError("Enter a valid house UUID.");
-      } else {
-        setError(requestError.message || "Couldn't join that house.");
-      }
+    } catch {
+      setError("Couldn't join that house. You might need to log in first.");
     } finally {
       setJoining(false);
     }
@@ -62,34 +88,52 @@ export default function JoinHouse() {
         </div>
 
         {/* Search form */}
-        <form onSubmit={handleJoin} className="jh-form">
+        <form onSubmit={handleSearch} className="jh-form">
           <input
             className="jh-code-input"
-            value={houseId}
-            onChange={(e) => setHouseId(e.target.value)}
+            value={house_Id}
+            onChange={(e) => setHouse_Id(e.target.value)}
             placeholder="House ID"
-            disabled={joining || joined}
+            disabled={searching || joined}
           />
           {error && <p className="jh-error">{error}</p>}
           <button
             type="submit"
-            disabled={joining || !houseId.trim() || joined}
-            className="jh-button jh-button-gradient"
+            disabled={searching || !house_Id.trim() || joined}
+            className="jh-button jh-button-dark"
           >
-            {joining ? "Joining..." : "Join house"}
+            {searching ? "Searching..." : "Find house"}
           </button>
         </form>
 
+        {/* House result */}
+        {house && !joined && (
+          <div className="jh-card jh-card-enter">
+            <div className="jh-card-body">
+              <h2 className="jh-card-title">{house.name}</h2>
+              <p className="jh-card-meta">
+                <MapPin size={14} /> {house.address}
+              </p>
+              <p className="jh-card-meta">
+                <Users size={14} /> {house.rooms} room{house.rooms === 1 ? "" : "s"}
+              </p>
+              <button onClick={handleJoin} disabled={joining} className="jh-button jh-button-gradient">
+                {joining ? "Joining..." : "Join house"}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Joined confirmation */}
-        {joined && (
+        {joined && house && (
           <div className="jh-confirm">
             <div className="jh-confirm-icon">
               <Check size={28} color="#d97706" />
             </div>
-            <h2 className="jh-card-title">You've joined the house.</h2>
+            <h2 className="jh-card-title">You've joined {house.name}!</h2>
             <p className="jh-confirm-text">Welcome in. You can see the full house from your dashboard.</p>
-            <button onClick={() => navigate("/FindHouse")} className="jh-button jh-button-dark jh-button-inline">
-              Back to dashboard
+            <button onClick={() => navigate("/")} className="jh-button jh-button-dark jh-button-inline">
+              Back to home
             </button>
           </div>
         )}

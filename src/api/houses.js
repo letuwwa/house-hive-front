@@ -4,13 +4,13 @@ export function listHouses() {
   return api.get('/api/v1/houses')
 }
 
-export function getHouse(houseId) {
-  return api.get(`/api/v1/houses/${encodeURIComponent(houseId)}`)
+export function getHouse(house_Id) {
+  return api.get(`/api/v1/houses/${encodeURIComponent(house_Id)}`)
 }
 
-export function listHouseMembers(houseId) {
+export function listHouseMembers(house_Id) {
   return api.get('/api/v1/house-members', {
-    params: { house_id: houseId },
+    params: { house_id: house_Id },
   })
 }
 
@@ -18,6 +18,6 @@ export function createHouse(houseData) {
   return api.post('/api/v1/houses', houseData)
 }
 
-export function joinHouse(houseId) {
-  return api.post(`/api/v1/houses/${encodeURIComponent(houseId)}/join`)
+export function joinHouse(house_Id) {
+  return api.post(`/api/v1/houses/${encodeURIComponent(house_Id)}/join`)
 }

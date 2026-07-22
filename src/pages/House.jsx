@@ -2,12 +2,19 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Home as HomeIcon, MapPin, Users } from "lucide-react";
 import { getHouse, listHouseMembers } from "../api/houses.js";
+import { listHouseChores, createChore, updateChore, deleteChore } from "../api/chores.js";
 import "../css/House.css";
 
 export default function House() {
-  const { houseId } = useParams();
+  const { house_Id } = useParams();
   const [house, setHouse] = useState(null);
   const [members, setMembers] = useState([]);
+  const [chores, setChores] = useState([]);
+  const [choresLoading, setChoresLoading] = useState(true);
+  const [choresError, setChoresError] = useState("");
+  const [choreForm, setChoreForm] = useState({ name: "", description: "" });
+  const [editingChoreId, setEditingChoreId] = useState(null);
+  const [savingChore, setSavingChore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -17,8 +24,8 @@ export default function House() {
     async function loadHouse() {
       try {
         const [houseResult, membersResult] = await Promise.all([
-          getHouse(houseId),
-          listHouseMembers(houseId),
+          getHouse(house_Id),
+          listHouseMembers(house_Id),
         ]);
         if (active) {
           setHouse(houseResult);
@@ -41,7 +48,104 @@ export default function House() {
     return () => {
       active = false;
     };
-  }, [houseId]);
+  }, [house_Id]);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadChores() {
+      setChoresLoading(true);
+      try {
+        const result = await listHouseChores(house_Id);
+        if (active) {
+          setChores(result);
+          setChoresError("");
+        }
+      } catch (requestError) {
+        if (active) {
+          setChoresError(requestError.message || "Could not load chores.");
+        }
+      } finally {
+        if (active) {
+          setChoresLoading(false);
+        }
+      }
+    }
+
+    loadChores();
+
+    return () => {
+      active = false;
+    };
+  }, [house_Id]);
+
+  const resetChoreForm = () => {
+    setChoreForm({ name: "", description: "" });
+    setEditingChoreId(null);
+  };
+
+  const handleChoreFieldChange = (event) => {
+    const { name, value } = event.target;
+    setChoreForm((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleChoreSubmit = async (event) => {
+    event.preventDefault();
+    setSavingChore(true);
+
+    const payload = {
+      name: choreForm.name.trim(),
+      description: choreForm.description.trim(),
+      house_id: house_Id,
+    };
+
+    if (!payload.name || !payload.description) {
+      setChoresError("Enter a chore name and description.");
+      setSavingChore(false);
+      return;
+    }
+
+    try {
+      const result = editingChoreId
+        ? await updateChore(editingChoreId, {
+            name: payload.name,
+            description: payload.description,
+          })
+        : await createChore(payload);
+
+      setChores((current) => {
+        if (editingChoreId) {
+          return current.map((item) => (item.id === result.id ? result : item));
+        }
+        return [result, ...current];
+      });
+      resetChoreForm();
+      setChoresError("");
+    } catch (requestError) {
+      setChoresError(requestError.message || "Unable to save chore.");
+    } finally {
+      setSavingChore(false);
+    }
+  };
+
+  const handleEditChore = (chore) => {
+    setEditingChoreId(chore.id);
+    setChoreForm({ name: chore.name, description: chore.description });
+    setChoresError("");
+  };
+
+  const handleDeleteChore = async (choreId) => {
+    if (!window.confirm("Delete this chore?")) {
+      return;
+    }
+
+    try {
+      await deleteChore(choreId);
+      setChores((current) => current.filter((item) => item.id !== choreId));
+    } catch (requestError) {
+      setChoresError(requestError.message || "Unable to delete chore.");
+    }
+  };
 
   if (loading) {
     return (
@@ -109,6 +213,78 @@ export default function House() {
                         <span>@{member.user.username} · {member.user.email}</span>
                       </div>
                       <span className="member-role">{member.role}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div className="house-chores">
+              <div className="house-section-header">
+                <div>
+                  <h2>Chores</h2>
+                  <p className="house-section-subtitle">Add, update, and remove tasks for your house.</p>
+                </div>
+                <span>{chores.length}</span>
+              </div>
+
+              <form className="chore-form" onSubmit={handleChoreSubmit}>
+                <label htmlFor="chore-name">Chore name</label>
+                <input
+                  id="chore-name"
+                  name="name"
+                  value={choreForm.name}
+                  onChange={handleChoreFieldChange}
+                  placeholder="e.g. Take out trash"
+                  disabled={savingChore}
+                  required
+                />
+
+                <label htmlFor="chore-description">Description</label>
+                <textarea
+                  id="chore-description"
+                  name="description"
+                  value={choreForm.description}
+                  onChange={handleChoreFieldChange}
+                  placeholder="e.g. Empty the kitchen bin and recycle plastics"
+                  disabled={savingChore}
+                  required
+                />
+
+                {choresError && <p className="house-error" role="alert">{choresError}</p>}
+                <div className="chore-actions">
+                  <button type="submit" className="house-button" disabled={savingChore}>
+                    {editingChoreId ? (savingChore ? "Saving chore..." : "Update chore") : (savingChore ? "Adding chore..." : "Add chore")}
+                  </button>
+                  {editingChoreId && (
+                    <button type="button" className="house-button house-button-muted" onClick={resetChoreForm} disabled={savingChore}>
+                      Cancel edit
+                    </button>
+                  )}
+                </div>
+              </form>
+
+              {choresLoading ? (
+                <p className="house-empty">Loading chores…</p>
+              ) : chores.length === 0 ? (
+                <p className="house-empty">No chores added yet.</p>
+              ) : (
+                <ul className="chore-list">
+                  {chores.map((chore) => (
+                    <li key={chore.id} className="chore-row">
+                      <div>
+                        <strong>{chore.name}</strong>
+                        <p>{chore.description}</p>
+                        <span className="chore-meta">Created by {chore.creator_username}</span>
+                      </div>
+                      <div className="chore-row-actions">
+                        <button type="button" className="house-button house-button-inline" onClick={() => handleEditChore(chore)}>
+                          Edit
+                        </button>
+                        <button type="button" className="house-button house-button-delete" onClick={() => handleDeleteChore(chore.id)}>
+                          Delete
+                        </button>
+                      </div>
                     </li>
                   ))}
                 </ul>

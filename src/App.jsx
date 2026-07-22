@@ -1,18 +1,18 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux"; //for redux
 import { getMe } from "./features/auth/authSlice";
 
-import Login from './pages/Login.jsx'
-import Profile from './pages/Profile.jsx'
-import Register from './pages/Register.jsx'
-import NotFound from './pages/NotFound.jsx'
 import Layout from './components/Layout.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 import FindHouse from './pages/FindHouse.jsx'
-import House from './pages/House.jsx'
+import Login from './pages/Login.jsx'
+import NotFound from './pages/NotFound.jsx'
+import Register from './pages/Register.jsx'
 import JoinHouse from './pages/JoinHouse.jsx';
 import CreateHouse from './pages/CreateHouse.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx'
+import House from './pages/House.jsx';
+import Profile from './pages/Profile.jsx';
 
 
 const router = createBrowserRouter([
@@ -41,14 +41,6 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'houses/:houseId',
-        element: (
-          <ProtectedRoute>
-            <House />
-          </ProtectedRoute>
-        ),
-      },
-      {
         path: 'JoinHouse',
         element: (
           <ProtectedRoute>
@@ -61,6 +53,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <CreateHouse />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'houses/:house_Id',
+        element: (
+          <ProtectedRoute>
+            <House />
           </ProtectedRoute>
         ),
       },

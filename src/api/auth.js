@@ -13,7 +13,7 @@ export function register({ username, email, password, first_name, last_name }) {
 export function login({ identifier, password }) {
   const formData = new URLSearchParams()
   formData.append('username', identifier)
-  formData.append('password', password)
+  formData.append('password', password) 
 
   return api.post('/api/v1/auth/login', formData, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
