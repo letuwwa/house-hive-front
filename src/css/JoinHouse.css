@@ -160,53 +160,9 @@
   background: #292524;
 }
 
-.jh-button-gradient {
-  background: linear-gradient(to right, #f59e0b, #ea580c);
-  color: #fff;
-}
-
-.jh-button-gradient:not(:disabled):hover {
-  background: linear-gradient(to right, #d97706, #c2410c);
-}
-
 .jh-button-inline {
   width: auto;
   padding: 0 32px;
-}
-
-/* House result card */
-.jh-card {
-  background: #fff;
-  border-radius: 16px;
-  border: 1px solid #e7e5e4;
-  overflow: hidden;
-  box-shadow: 0 20px 40px -20px rgba(245, 158, 11, 0.15);
-}
-
-.jh-card-enter {
-  animation: jh-fade-in 0.3s ease-out;
-}
-
-@keyframes jh-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.jh-card-image {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  display: block;
-}
-
-.jh-card-body {
-  padding: 24px;
 }
 
 .jh-card-title {
@@ -214,22 +170,6 @@
   font-weight: 700;
   color: #1c1917;
   margin: 0 0 12px;
-}
-
-.jh-card-meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #78716c;
-  margin: 0 0 8px;
-}
-
-.jh-card-desc {
-  font-size: 14px;
-  color: #57534e;
-  line-height: 1.6;
-  margin: 0 0 20px;
 }
 
 /* Confirmation */

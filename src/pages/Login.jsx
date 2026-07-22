@@ -32,7 +32,7 @@ function Login() {
       await dispatch(login(form)).unwrap()
       navigate('/FindHouse')
     } catch (err) {
-      setError(err.message || 'Login failed')
+      setError(typeof err === 'string' ? err : err?.message || 'Login failed')
     } finally {
       setSubmitting(false)
     }
@@ -57,7 +57,7 @@ function Login() {
             <p className="error-msg">{error}</p>
           )}
 
-          <form onSubmit={handleSubmit}>
+          <form className="auth-form" onSubmit={handleSubmit}>
 
             <label>Email or Username</label>
 

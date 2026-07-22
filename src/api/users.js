@@ -1,21 +1,21 @@
-import api from "./client";
+import api from "./client.js";
 
 export function getUsers() {
-  return api.get("/api/users/");
+  return api.get("/api/v1/users/");
 }
 
 export function followUser(username) {
-  return api.post(`/api/users/follow/${username}`);
+  return api.post(`/api/v1/users/follow/${encodeURIComponent(username)}`);
 }
 
 export function getFriends() {
-  return api.get("/api/users/friends");
+  return api.get("/api/v1/users/friends");
 }
 
 export function unfollowUser(username) {
-  return api.post(`/api/users/unfollow/${username}`);
+  return api.post(`/api/v1/users/unfollow/${encodeURIComponent(username)}`);
 }
 
 export function getStats() {
-  return api.get("/api/users/stats");
+  return api.get("/api/v1/users/stats");
 }

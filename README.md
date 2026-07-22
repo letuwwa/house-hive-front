@@ -27,7 +27,7 @@ npm install lucide-react
 Create a `.env` file in the frontend root:
 
 ```env
-VITE_API_URL=http://localhost:8000/api/v1
+VITE_API_BASE_URL=http://localhost:8000
 ```
 
 Vite exposes only environment variables beginning with `VITE_` to browser code. Do not put secrets in this file.
@@ -46,15 +46,15 @@ Set Axios’s base URL from the environment variable:
 
 ```js
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 })
 ```
 
-Since the base URL already includes `/api/v1`, API functions must not repeat it:
+API functions include the `/api/v1` prefix:
 
 ```js
-api.get('/auth/me')
-api.post('/auth/login', credentials)
+api.get('/api/v1/auth/me')
+api.post('/api/v1/auth/login', credentials)
 ```
 
 ## Icons

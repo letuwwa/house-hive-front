@@ -35,15 +35,15 @@ function Register() {
       await dispatch(register(form)).unwrap()
       navigate('/FindHouse')
     } catch (err) {
-      setError(err || 'Registration failed')
+      setError(typeof err === 'string' ? err : err?.message || 'Registration failed')
     } finally {
       setSubmitting(false)
     }
   }
 
   return (
-  <div className="login-page">
-    <div className="login-container">
+  <div className="login-page register-page">
+    <div className="login-container register-container">
 
       <div className="login-icon">
         👤
@@ -54,11 +54,11 @@ function Register() {
         Join HouseHive and create your profile
       </p>
 
-      <div className="login-card">
+      <div className="login-card register-card">
 
         {error && <p className="error-msg">{error}</p>}
 
-        <form onSubmit={handleSubmit}>
+        <form className="auth-form" onSubmit={handleSubmit}>
 
           <label>Email</label>
           <input

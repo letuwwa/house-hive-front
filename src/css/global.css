@@ -1,4 +1,3 @@
-/* Dashboard / Profile Page */
 .dashboard-page {
   --primary: #6b4f3b;
   --primary-light: #8a6d54;
@@ -17,7 +16,6 @@
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-/* Profile header */
 .profile-header {
   text-align: center;
   margin-bottom: 2.5rem;
@@ -61,8 +59,7 @@
   margin-top: 0.2rem;
 }
 
-/* Library section */
-.library-section {
+.profile-section {
   margin-bottom: 2.5rem;
 }
 
@@ -79,13 +76,12 @@
   margin: 0;
 }
 
-.library-section > p {
+.profile-section > p {
   color: var(--text-muted);
   text-align: center;
   padding: 2rem 0;
 }
 
-/* Buttons */
 .button {
   display: inline-block;
   text-decoration: none;
@@ -107,50 +103,77 @@
   background: var(--primary-light);
 }
 
-/* Books grid */
-.books-grid {
+.profile-info-grid {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.profile-info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  background: #fff;
+  color: var(--text-muted);
+}
+
+.profile-info-row svg {
+  color: var(--primary);
+  flex: 0 0 auto;
+}
+
+.profile-house-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
 }
 
-.book-card {
+.profile-house-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 8px;
   padding: 1.25rem;
+  color: inherit;
+  text-decoration: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.book-card:hover {
+.profile-house-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
-.book-card h3 {
-  font-size: 1.05rem;
-  margin: 0 0 0.4rem;
-  line-height: 1.3;
+.profile-house-card svg {
+  color: var(--primary);
+  flex: 0 0 auto;
 }
 
-.book-card p {
+.profile-house-card strong,
+.profile-house-card span {
+  display: block;
+}
+
+.profile-house-card span {
   color: var(--text-muted);
-  margin: 0 0 0.75rem;
+  margin-top: 0.35rem;
   font-size: 0.9rem;
+  line-height: 1.4;
 }
 
-.book-card span {
-  display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--available);
+.profile-error {
+  background: #ffeaea;
+  color: #b00020;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
 }
 
-/* Responsive */
 @media (max-width: 500px) {
   .profile-stats {
     gap: 1.5rem;

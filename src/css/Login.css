@@ -11,12 +11,22 @@
     align-items: center;
     background: #ffffff;
     font-family: Arial, Helvetica, sans-serif;
+    padding: 32px 18px;
 }
 
 .login-container {
     width: 100%;
     max-width: 500px;
     text-align: center;
+}
+
+.register-page {
+    align-items: flex-start;
+    background: #fffdf8;
+}
+
+.register-container {
+    max-width: 560px;
 }
 
 .login-icon {
@@ -51,6 +61,10 @@
     border-radius: 16px;
     padding: 35px;
     box-shadow: 0 8px 30px rgba(0,0,0,.05);
+}
+
+.register-card {
+    padding: 30px;
 }
 
 .google-btn {
@@ -103,19 +117,20 @@
     font-size: 14px;
 }
 
-form {
+.auth-form {
     display: flex;
     flex-direction: column;
     text-align: left;
 }
 
-form label {
+.auth-form label {
     margin-bottom: 8px;
     font-weight: 600;
     color: #222;
 }
 
-form input {
+.auth-form input {
+    width: 100%;
     height: 50px;
     border-radius: 10px;
     border: 1px solid #d8d8d8;
@@ -125,7 +140,7 @@ form input {
     transition: .2s;
 }
 
-form input:focus {
+.auth-form input:focus {
     outline: none;
     border-color: black;
 }
@@ -187,14 +202,15 @@ form input:focus {
 /* ---------- Register Page ---------- */
 
 .name-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 15px;
 }
 
 .name-row > div {
-    flex: 1;
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .name-row input {
@@ -202,8 +218,43 @@ form input:focus {
 }
 
 @media (max-width: 600px) {
+    .login-page {
+        align-items: flex-start;
+        padding: 24px 14px;
+    }
+
+    .login-container h1 {
+        font-size: 34px;
+    }
+
+    .subtitle {
+        margin-bottom: 24px;
+    }
+
+    .login-card,
+    .register-card {
+        padding: 24px 18px;
+        border-radius: 12px;
+    }
+
     .name-row {
-        flex-direction: column;
+        grid-template-columns: 1fr;
         gap: 0;
+    }
+}
+
+@media (max-width: 360px) {
+    .login-container h1 {
+        font-size: 30px;
+    }
+
+    .login-card,
+    .register-card {
+        padding: 20px 14px;
+    }
+
+    .auth-form input,
+    .login-btn {
+        height: 48px;
     }
 }

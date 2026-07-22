@@ -6,8 +6,8 @@
 }
 
 .house-nav {
-  max-width: 72rem;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
   padding: 20px 24px;
 }
 
@@ -29,29 +29,50 @@
 }
 
 .house-container {
-  max-width: 42rem;
-  margin: 0 auto;
-  padding: 48px 24px 96px;
+  max-width: none;
+  margin: 0;
+  padding: 12px 24px 80px;
+}
+
+.house-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+
+.house-sidebar {
+  display: grid;
+  gap: 16px;
 }
 
 .house-panel {
   background: #fff;
   border: 1px solid #e7e5e4;
-  border-radius: 16px;
-  padding: 36px;
+  border-radius: 12px;
+  padding: 24px;
   box-shadow: 0 20px 40px -24px rgba(28, 25, 23, 0.18);
 }
 
+.house-summary-panel,
+.house-members-panel {
+  width: 100%;
+}
+
+.house-chores-panel {
+  min-width: 0;
+}
+
 .house-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
   background: linear-gradient(to bottom right, #fbbf24, #f97316);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .house-icon-error {
@@ -60,8 +81,8 @@
 }
 
 .house-panel h1 {
-  font-size: 32px;
-  margin: 0 0 18px;
+  font-size: 28px;
+  margin: 0 0 14px;
 }
 
 .house-panel > p {
@@ -72,8 +93,8 @@
 
 .house-details {
   display: grid;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 .house-details p {
@@ -84,14 +105,27 @@
   margin: 0;
 }
 
-.house-id {
-  display: block;
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid #e7e5e4;
-  background: #f5f5f4;
-  color: #44403c;
-  word-break: break-all;
+.house-id-field {
+  display: flex;
+}
+
+.house-id-field button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 0;
+  border-radius: 7px;
+  background: #1c1917;
+  color: #ffffff;
+  padding: 7px 9px;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.house-id-field button:hover {
+  background: #292524;
 }
 
 .house-members {
@@ -143,7 +177,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
+  padding: 10px;
   border: 1px solid #e7e5e4;
   border-radius: 10px;
   background: #fff;
@@ -151,8 +185,8 @@
 
 .member-avatar {
   flex: 0 0 auto;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 999px;
   background: #1c1917;
   color: #fbbf24;
@@ -179,6 +213,15 @@
   font-size: 14px;
 }
 
+.member-username,
+.member-email {
+  display: block;
+}
+
+.member-email {
+  font-size: 13px;
+}
+
 .member-role {
   flex: 0 0 auto;
   border-radius: 999px;
@@ -191,9 +234,9 @@
 }
 
 .house-chores {
-  margin-top: 32px;
-  padding-top: 28px;
-  border-top: 1px solid #e7e5e4;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
 }
 
 .house-section-subtitle {
@@ -205,12 +248,24 @@
 
 .chore-form {
   display: grid;
-  gap: 14px;
+  grid-template-columns: minmax(160px, 240px) minmax(220px, 1fr) auto;
+  align-items: start;
+  gap: 10px;
   margin-bottom: 24px;
+  padding: 12px;
+  border: 1px solid #e7e5e4;
+  border-radius: 12px;
+  background: #fffbeb;
+}
+
+.chore-field {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
 }
 
 .chore-form label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #374151;
 }
@@ -219,38 +274,51 @@
 .chore-form textarea {
   width: 100%;
   border: 1px solid #e7e5e4;
-  border-radius: 12px;
-  padding: 12px 14px;
+  border-radius: 10px;
+  padding: 9px 11px;
   font: inherit;
+  font-size: 14px;
   color: #1c1917;
   background: #f8fafc;
 }
 
 .chore-form textarea {
-  min-height: 90px;
+  min-height: 39px;
+  max-height: 78px;
   resize: vertical;
 }
 
 .chore-actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
+  padding-top: 22px;
 }
 
 .house-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   appearance: none;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #f59e0b;
   color: #ffffff;
-  padding: 12px 18px;
+  padding: 10px 14px;
   font-weight: 700;
+  font-size: 14px;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
-.house-button:hover {
+.house-button:hover:not(:disabled) {
   background: #d97706;
+}
+
+.house-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
 }
 
 .house-button-muted {
@@ -268,7 +336,17 @@
   color: #b91c1c;
 }
 
+.house-button-complete {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.house-button-complete:hover:not(:disabled) {
+  background: #bbf7d0;
+}
+
 .house-error {
+  grid-column: 1 / -1;
   color: #b91c1c;
 }
 
@@ -282,16 +360,19 @@
 
 .chore-row {
   display: grid;
-  gap: 10px;
-  padding: 18px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 16px;
+  padding: 14px;
   background: #f8fafc;
   border: 1px solid #e7e5e4;
-  border-radius: 14px;
+  border-radius: 12px;
 }
 
 .chore-row-actions {
   display: flex;
-  gap: 10px;
+  justify-content: flex-end;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -313,6 +394,67 @@
   font-size: 13px;
 }
 
+.completed-chores {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid #e7e5e4;
+}
+
+.completed-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.completed-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  background: #f0fdf4;
+}
+
+.completed-icon {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #dcfce7;
+  color: #166534;
+}
+
+.completed-row strong,
+.completed-row span,
+.completed-row p {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.completed-row strong {
+  color: #14532d;
+}
+
+.completed-row span {
+  margin-top: 3px;
+  color: #166534;
+  font-size: 13px;
+}
+
+.completed-row p {
+  margin: 6px 0 0;
+  color: #15803d;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
 .house-loading {
   min-height: 100vh;
   display: flex;
@@ -332,6 +474,24 @@
 @keyframes house-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 900px) {
+  .house-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .chore-form {
+    grid-template-columns: 1fr;
+  }
+
+  .chore-row {
+    grid-template-columns: 1fr;
+  }
+
+  .chore-row-actions {
+    justify-content: flex-start;
   }
 }
 

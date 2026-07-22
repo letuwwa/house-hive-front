@@ -21,7 +21,14 @@ const router = createBrowserRouter([
     element: <Layout />,
     errorElement: <NotFound />,
     children: [
-      {index: true, element: <Navigate to="/login" replace />},
+      {
+        index: true,
+        element: (
+          <ProtectedRoute>
+            <Navigate to="/FindHouse" replace />
+          </ProtectedRoute>
+        ),
+      },
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> },
       {
