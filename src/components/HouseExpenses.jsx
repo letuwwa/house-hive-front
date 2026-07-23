@@ -109,25 +109,49 @@ export default function HouseExpenses({ houseId, members = [] }) {
   const usernamesByMemberId = useMemo(() => {
     const names = new Map();
 
+    const setName = (memberId, username) => {
+      if (memberId && username) {
+        names.set(memberId, username);
+      }
+    };
+
     members.forEach((member) => {
       const memberId = member.id || member.member_id;
-      if (memberId && member.user?.username) {
-        names.set(memberId, member.user.username);
-      }
+      setName(memberId, member.user?.username || member.username);
+    });
+
+    expenses.forEach((expense) => {
+      setName(expense.paid_by_member_id, expense.paid_by_username);
+      expense.shares?.forEach((share) => {
+        setName(share.member_id, share.username);
+      });
+    });
+
+    balances.forEach((balance) => {
+      setName(balance.member_id, balance.username);
     });
 
     debts.forEach((debt) => {
-      names.set(debt.from_member_id, debt.from_username);
-      names.set(debt.to_member_id, debt.to_username);
+      setName(debt.from_member_id, debt.from_username);
+      setName(debt.to_member_id, debt.to_username);
+    });
+
+    settlements.forEach((settlement) => {
+      setName(settlement.from_member_id, settlement.from_username);
+      setName(settlement.to_member_id, settlement.to_username);
     });
 
     return names;
-  }, [debts, members]);
+  }, [balances, debts, expenses, members, settlements]);
 
   const getBalanceName = (memberId) => {
     const username = usernamesByMemberId.get(memberId);
     return username ? `@${username}` : shortId(memberId);
   };
+
+  const getMemberName = (memberId, username) => (
+    username ? `@${username}` : getBalanceName(memberId)
+  );
 
   const formatDate = (value) => {
     if (!value) return "";
@@ -294,6 +318,7 @@ export default function HouseExpenses({ houseId, members = [] }) {
                       {formatMoney(expense.amount_cents)} split {expense.shares.length} way
                       {expense.shares.length === 1 ? "" : "s"}
                     </span>
+                    <span>Paid by {getMemberName(expense.paid_by_member_id, expense.paid_by_username)}</span>
                   </div>
                   <button
                     type="button"
@@ -347,8 +372,8 @@ export default function HouseExpenses({ houseId, members = [] }) {
               {debts.map((debt) => (
                 <li key={`${debt.from_member_id}-${debt.to_member_id}`} className="debt-row">
                   <div className="debt-copy">
-                    <strong>@{debt.from_username}</strong>
-                    <span>owes @{debt.to_username}</span>
+                    <strong>{getMemberName(debt.from_member_id, debt.from_username)}</strong>
+                    <span>owes {getMemberName(debt.to_member_id, debt.to_username)}</span>
                   </div>
                   <div className="debt-actions">
                     <strong className="debt-amount">{formatMoney(debt.amount_cents)}</strong>
@@ -380,7 +405,8 @@ export default function HouseExpenses({ houseId, members = [] }) {
                 <li key={settlement.id} className="settlement-row">
                   <div>
                     <strong>
-                      {getBalanceName(settlement.from_member_id)} paid {getBalanceName(settlement.to_member_id)}
+                      {getMemberName(settlement.from_member_id, settlement.from_username)} paid{" "}
+                      {getMemberName(settlement.to_member_id, settlement.to_username)}
                     </strong>
                     {settlement.note && <p>{settlement.note}</p>}
                     <span>{formatDate(settlement.settled_at)}</span>
